@@ -57,73 +57,360 @@ p{color:var(--muted);line-height:1.5}
 .config input{width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#0c0f0d;color:var(--text);margin:7px 0 10px}
 .config label{font-size:12px;color:var(--muted)}
 .config button{margin-top:5px}
+.playerpanel{margin:26px 0;padding:16px;background:var(--panel);border:1px solid var(--line);border-radius:18px}
+.playerpanel h2{font-size:18px;margin:0 0 8px}
+.playerpanel p{font-size:13px;margin:0 0 14px}
+.playerpanel iframe{display:block;width:100%;border:0;border-radius:12px;background:#111}
 .footer{font-size:11px;color:#69736b;text-align:center;margin-top:30px}
 @media(min-width:600px){.app{padding-left:28px;padding-right:28px}.hero{padding-top:34px}.tiles{grid-template-columns:repeat(4,minmax(0,1fr))}.tile{min-height:135px}}
 </style>
 </head>
 <body>
 <div class="app">
-<header><div class="brand">N<span>Ø</span>IR</div><div class="status" id="status">MODE DÉMO</div></header>
+<header>
+  <div class="brand">N<span>Ø</span>IR</div>
+  <div class="status" id="status">MODE DÉMO</div>
+</header>
+
 <main>
 <section id="homeView">
-<div class="hero">
-<div class="eyebrow">TA MUSIQUE, TES RÈGLES</div>
-<h1>Le son, sans<br>le superflu.</h1>
-<p>Ton espace musical personnel. Recherche, découvre et garde tes favoris au même endroit.</p>
-<form class="search" id="searchForm"><span>⌕</span><input id="searchInput" placeholder="Artiste, titre, album…" autocomplete="off"><button type="submit">Chercher</button></form>
-</div>
-<div class="sectionhead"><h2>Accès rapide</h2><span>À toi de choisir</span></div>
-<div class="tiles">
-<button class="tile" data-go="search"><span class="symbol">⌕</span><span><strong>Explorer</strong><small>Recherche musicale</small></span></button>
-<button class="tile" data-go="library"><span class="symbol">♡</span><span><strong>Mes favoris</strong><small id="favCount">0 titre</small></span></button>
-<button class="tile" data-go="config"><span class="symbol">↗</span><span><strong>Connecter Spotify</strong><small>Configuration</small></span></button>
-<button class="tile" data-go="about"><span class="symbol">✳</span><span><strong>Le projet</strong><small>Version personnelle</small></span></button>
-</div>
-<div class="notice"><strong>À savoir :</strong> cette première version recherche les morceaux dans le catalogue Spotify et ouvre leur lecture dans Spotify. Elle ne récupère pas les flux audio et ne remplace pas l'application Spotify.</div>
-<div class="sectionhead"><h2>Pour commencer</h2></div>
-<div class="empty">Connecte ton application Spotify dans les réglages, puis recherche un artiste ou un morceau. Tes favoris seront enregistrés sur cet appareil.</div>
+  <div class="hero">
+    <div class="eyebrow">TA MUSIQUE, TES RÈGLES</div>
+    <h1>Le son, sans<br>le superflu.</h1>
+    <p>Ton espace musical personnel. Recherche, découvre et garde tes favoris au même endroit.</p>
+    <form class="search" id="searchForm">
+      <span>⌕</span>
+      <input id="searchInput" placeholder="Artiste, titre, album…" autocomplete="off">
+      <button type="submit">Chercher</button>
+    </form>
+  </div>
+
+  <div class="sectionhead"><h2>Accès rapide</h2><span>À toi de choisir</span></div>
+  <div class="tiles">
+    <button class="tile" data-go="search"><span class="symbol">⌕</span><span><strong>Explorer</strong><small>Recherche musicale</small></span></button>
+    <button class="tile" data-go="library"><span class="symbol">♡</span><span><strong>Mes favoris</strong><small id="favCount">0 titre</small></span></button>
+    <button class="tile" data-go="config"><span class="symbol">↗</span><span><strong>Connecter Spotify</strong><small>Configuration</small></span></button>
+    <button class="tile" data-go="about"><span class="symbol">✳</span><span><strong>Le projet</strong><small>Version personnelle</small></span></button>
+  </div>
+
+  <div class="notice"><strong>Le lecteur NØIR :</strong> lance un morceau depuis les résultats pour afficher le lecteur intégré ci-dessous. La lecture est fournie par Spotify.</div>
+  <div class="sectionhead"><h2>Pour commencer</h2></div>
+  <div class="empty">Connecte Spotify dans les réglages, recherche un morceau puis appuie sur ▶ pour l'écouter dans le lecteur intégré.</div>
 </section>
-<section id="searchView" class="hidden"><div class="sectionhead"><h2>Explorer</h2><span id="resultCount"></span></div><div id="searchResults" class="results"><div class="empty">Recherche un titre, un album ou un artiste.</div></div></section>
-<section id="libraryView" class="hidden"><div class="sectionhead"><h2>Mes favoris</h2><span id="libraryCount"></span></div><div id="libraryResults" class="results"></div></section>
+
+<section id="searchView" class="hidden">
+  <div class="sectionhead"><h2>Explorer</h2><span id="resultCount"></span></div>
+  <div id="searchResults" class="results"><div class="empty">Recherche un titre, un album ou un artiste.</div></div>
+</section>
+
+<section id="libraryView" class="hidden">
+  <div class="sectionhead"><h2>Mes favoris</h2><span id="libraryCount"></span></div>
+  <div id="libraryResults" class="results"></div>
+</section>
+
 <section id="configView" class="hidden">
-<div class="eyebrow">CONFIGURATION</div><h1>Connecter<br>Spotify.</h1>
-<p>Pour activer la recherche, crée une application dans le tableau de bord Spotify for Developers. Copie son Client ID ci-dessous et ajoute l'URL de cette page comme Redirect URI.</p>
-<div class="config"><label for="clientId">Spotify Client ID</label><input id="clientId" placeholder="Colle ici ton Client ID"><label for="redirectUri">Redirect URI exacte</label><input id="redirectUri" readonly><button class="primary" id="saveConfig">Enregistrer</button><button class="subtlebtn" id="loginBtn">Connecter mon compte Spotify ↗</button></div>
-<div class="notice"><strong>Étapes :</strong><br>1. Ouvre developer.spotify.com/dashboard<br>2. Crée une app pour la Web API.<br>3. Dans ses réglages, ajoute l'URL exacte affichée ici aux Redirect URIs.<br>4. Copie le Client ID dans le champ ci-dessus, enregistre, puis connecte-toi.<br><br>Ne partage jamais de mot de passe ou de Client Secret. Cette page utilise le flux PKCE et ne demande pas ton mot de passe Spotify.</div>
+  <div class="eyebrow">CONFIGURATION</div>
+  <h1>Connecter<br>Spotify.</h1>
+  <p>Pour activer la recherche, crée une application dans le tableau de bord Spotify for Developers. Copie son Client ID ci-dessous et ajoute l'URL de cette page comme Redirect URI.</p>
+  <div class="config">
+    <label for="clientId">Spotify Client ID</label>
+    <input id="clientId" placeholder="Colle ici ton Client ID">
+    <label for="redirectUri">Redirect URI exacte</label>
+    <input id="redirectUri" readonly>
+    <button class="primary" id="saveConfig">Enregistrer</button>
+    <button class="subtlebtn" id="loginBtn">Connecter mon compte Spotify ↗</button>
+  </div>
+  <div class="notice"><strong>Étapes :</strong><br>1. Ouvre developer.spotify.com/dashboard<br>2. Crée une app pour la Web API.<br>3. Dans ses réglages, ajoute l'URL exacte affichée ici aux Redirect URIs.<br>4. Copie le Client ID, enregistre, puis connecte-toi.<br><br>Ne partage jamais de mot de passe ou de Client Secret. Cette page utilise PKCE.</div>
 </section>
-<section id="aboutView" class="hidden"><div class="eyebrow">À PROPOS</div><h1>Un lecteur<br>à ton image.</h1><p>NOIR est un prototype personnel : une interface légère, sans publicité intégrée, avec recherche Spotify et favoris locaux.</p><div class="notice">La lecture est ouverte dans Spotify. La lecture directement dans ce site, notamment écran verrouillé, n'est pas activée dans cette version. Les règles de Spotify continuent de s'appliquer.</div><button class="primary" data-go="config">Configurer Spotify</button></section>
+
+<section id="aboutView" class="hidden">
+  <div class="eyebrow">À PROPOS</div>
+  <h1>Un lecteur<br>à ton image.</h1>
+  <p>NØIR est un prototype personnel : une interface légère avec recherche Spotify, favoris locaux et lecteur intégré.</p>
+  <div class="notice">La lecture intégrée dépend de Spotify et de la disponibilité du morceau. Certains titres peuvent demander une connexion ou s'ouvrir dans Spotify.</div>
+  <button class="primary" data-go="config">Configurer Spotify</button>
+</section>
+
+<section class="playerpanel" id="playerPanel">
+  <h2>Lecteur NØIR</h2>
+  <p id="nowPlaying">Choisis un morceau pour le lire ici.</p>
+  <iframe id="spotifyPlayer" title="Lecteur Spotify"
+    src="about:blank"
+    height="152"
+    loading="lazy"
+    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
+  </iframe>
+</section>
+
+<div class="footer">NØIR • Prototype indépendant, non affilié à Spotify.</div>
 </main>
-<div class="footer">NOIR • Prototype indépendant, non affilié à Spotify.</div>
 </div>
-<nav class="bottomnav"><button class="active" data-tab="home"><b>⌂</b>Accueil</button><button data-tab="search"><b>⌕</b>Explorer</button><button data-tab="library"><b>♡</b>Favoris</button><button data-tab="config"><b>⚙</b>Réglages</button></nav>
+
+<nav class="bottomnav">
+  <button class="active" data-tab="home"><b>⌂</b>Accueil</button>
+  <button data-tab="search"><b>⌕</b>Explorer</button>
+  <button data-tab="library"><b>♡</b>Favoris</button>
+  <button data-tab="config"><b>⚙</b>Réglages</button>
+</nav>
+
 <script>
-const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
+const $=s=>document.querySelector(s);
+const $$=s=>document.querySelectorAll(s);
+
 const views={home:'homeView',search:'searchView',library:'libraryView',config:'configView',about:'aboutView'};
-let clientId=localStorage.getItem('noir_client_id')||'',token=localStorage.getItem('noir_token')||'',expires=+(localStorage.getItem('noir_expires')||0);
+
+let clientId=localStorage.getItem('noir_client_id')||'';
+let token=localStorage.getItem('noir_token')||'';
+let expires=+(localStorage.getItem('noir_expires')||0);
 let favorites=JSON.parse(localStorage.getItem('noir_favorites')||'[]');
+
 const redirectUri=location.href.split('#')[0].split('?')[0];
 $('#redirectUri').value=redirectUri;
 $('#clientId').value=clientId;
+
 function setStatus(t){$('#status').textContent=t}
-function go(tab){Object.values(views).forEach(id=>$('#'+id).classList.add('hidden'));$('#'+(views[tab]||views.home)).classList.remove('hidden');$$('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));if(tab==='library')renderFavorites();window.scrollTo({top:0,behavior:'smooth'})}
+
+function go(tab){
+  Object.values(views).forEach(id=>$('#'+id).classList.add('hidden'));
+  $('#'+(views[tab]||views.home)).classList.remove('hidden');
+  $$('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+  if(tab==='library')renderFavorites();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
 $$('[data-tab]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.tab)));
 $$('[data-go]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.go)));
-function randomString(n=64){const a=new Uint8Array(n);crypto.getRandomValues(a);return Array.from(a,x=>('0'+x.toString(16)).slice(-2)).join('')}
-async function sha256(s){const data=new TextEncoder().encode(s);const digest=await crypto.subtle.digest('SHA-256',data);return btoa(String.fromCharCode(...new Uint8Array(digest))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
-async function login(){if(!clientId){go('config');alert('Ajoute d’abord ton Spotify Client ID.');return}const verifier=randomString(64),challenge=await sha256(verifier),state=randomString(16);sessionStorage.setItem('noir_verifier',verifier);sessionStorage.setItem('noir_state',state);const u=new URL('https://accounts.spotify.com/authorize');u.search=new URLSearchParams({client_id:clientId,response_type:'code',redirect_uri:redirectUri,code_challenge_method:'S256',code_challenge:challenge,state:state}).toString();location.href=u.toString()}
-async function handleCallback(){const p=new URLSearchParams(location.search),code=p.get('code'),state=p.get('state');if(p.get('error')){alert('Connexion refusée par Spotify.');history.replaceState({},'',redirectUri);return}if(!code)return;if(!state||state!==sessionStorage.getItem('noir_state')){alert('Échec de vérification de sécurité. Recommence la connexion.');history.replaceState({},'',redirectUri);return}try{const r=await fetch('https://accounts.spotify.com/api/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({client_id:clientId,grant_type:'authorization_code',code,redirect_uri:redirectUri,code_verifier:sessionStorage.getItem('noir_verifier')||''})});const d=await r.json();if(!r.ok)throw Error(d.error_description||'Connexion impossible');token=d.access_token;expires=Date.now()+d.expires_in*1000;localStorage.setItem('noir_token',token);localStorage.setItem('noir_expires',expires);setStatus('CONNECTÉ');history.replaceState({},'',redirectUri);go('search')}catch(e){alert('Connexion impossible : '+e.message)}}
-async function ensureToken(){if(token&&Date.now()<expires-60000)return token;throw Error('Ta session Spotify a expiré. Reconnecte ton compte dans Réglages.')}
-function esc(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function trackCard(t){const img=t.album?.images?.slice(-1)[0]?.url||'';const artists=(t.artists||[]).map(a=>a.name).join(', ');const saved=favorites.some(f=>f.id===t.id);return `<article class="track"><img class="cover" src="${esc(img)}" alt="" onerror="this.style.visibility='hidden'"><div class="trackinfo"><strong>${esc(t.name)}</strong><small>${esc(artists)} · ${esc(t.album?.name||'')}</small></div><div class="trackactions"><button class="round" aria-label="${saved?'Retirer des favoris':'Ajouter aux favoris'}" data-fav="${esc(t.id)}">${saved?'♥':'♡'}</button><button class="round play" aria-label="Ouvrir dans Spotify" data-play="${esc(t.id)}">▶</button></div></article>`}
-function bindCards(container){container.querySelectorAll('[data-fav]').forEach(b=>b.addEventListener('click',()=>{const id=b.dataset.fav;const track=(window.noirTracks||[]).find(t=>t.id===id)||favorites.find(t=>t.id===id);if(!track){alert('Relance la recherche pour ajouter ce titre aux favoris.');return}const i=favorites.findIndex(f=>f.id===id);if(i>=0)favorites.splice(i,1);else favorites.unshift(track);localStorage.setItem('noir_favorites',JSON.stringify(favorites));$('#favCount').textContent=favorites.length+' titre'+(favorites.length>1?'s':'');renderResults(window.noirTracks||[]);renderFavorites()}));container.querySelectorAll('[data-play]').forEach(b=>b.addEventListener('click',()=>{const t=(window.noirTracks||[]).find(t=>t.id===b.dataset.play)||favorites.find(t=>t.id===b.dataset.play);if(t?.external_urls?.spotify)location.href=t.external_urls.spotify;else window.open('https://open.spotify.com/track/'+encodeURIComponent(b.dataset.play),'_blank')}))}
-function renderResults(tracks){window.noirTracks=tracks;const el=$('#searchResults');el.innerHTML=tracks.length?tracks.map(t=>trackCard(t)).join(''):'<div class="empty">Aucun résultat. Essaie un autre titre.</div>';bindCards(el);$('#resultCount').textContent=tracks.length+' titre'+(tracks.length>1?'s':'')}
-function renderFavorites(){const el=$('#libraryResults');$('#libraryCount').textContent=favorites.length+' titre'+(favorites.length>1?'s':'');$('#favCount').textContent=favorites.length+' titre'+(favorites.length>1?'s':'');el.innerHTML=favorites.length?favorites.map(t=>trackCard(t)).join(''):'<div class="empty">Tes favoris apparaîtront ici. Lance une recherche puis touche ♡.</div>';bindCards(el)}
-async function search(q){go('search');if(!q.trim())return;$('#searchResults').innerHTML='<div class="empty">Recherche en cours…</div>';try{await ensureToken();const r=await fetch('https://api.spotify.com/v1/search?'+new URLSearchParams({q,type:'track',limit:'8'}),{headers:{Authorization:'Bearer '+token}});const d=await r.json();if(!r.ok)throw Error(d.error?.message||'Recherche impossible');renderResults(d.tracks?.items||[])}catch(e){$('#searchResults').innerHTML='<div class="empty">'+esc(e.message)+'<br><br><button class="primary" id="relogin">Reconnecter Spotify</button></div>';$('#relogin')?.addEventListener('click',login)}}
-$('#searchForm').addEventListener('submit',e=>{e.preventDefault();search($('#searchInput').value)});
-$('#saveConfig').addEventListener('click',()=>{clientId=$('#clientId').value.trim();if(!clientId){alert('Entre ton Client ID.');return}localStorage.setItem('noir_client_id',clientId);setStatus(token&&Date.now()<expires?'CONNECTÉ':'PRÊT');alert('Client ID enregistré sur cet appareil. Vérifie que le Redirect URI correspond exactement à celui du tableau de bord Spotify.')});
+
+function randomString(n=64){
+  const a=new Uint8Array(n);
+  crypto.getRandomValues(a);
+  return Array.from(a,x=>('0'+x.toString(16)).slice(-2)).join('');
+}
+
+async function sha256(s){
+  const data=new TextEncoder().encode(s);
+  const digest=await crypto.subtle.digest('SHA-256',data);
+  return btoa(String.fromCharCode(...new Uint8Array(digest)))
+    .replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+
+async function login(){
+  if(!clientId){go('config');alert('Ajoute d’abord ton Spotify Client ID.');return}
+  const verifier=randomString(64);
+  const challenge=await sha256(verifier);
+  const state=randomString(16);
+  sessionStorage.setItem('noir_verifier',verifier);
+  sessionStorage.setItem('noir_state',state);
+
+  const u=new URL('https://accounts.spotify.com/authorize');
+  u.search=new URLSearchParams({
+    client_id:clientId,
+    response_type:'code',
+    redirect_uri:redirectUri,
+    code_challenge_method:'S256',
+    code_challenge:challenge,
+    state:state
+  }).toString();
+
+  location.href=u.toString();
+}
+
+async function handleCallback(){
+  const p=new URLSearchParams(location.search);
+  const code=p.get('code');
+  const state=p.get('state');
+
+  if(p.get('error')){
+    alert('Connexion refusée par Spotify.');
+    history.replaceState({},'',redirectUri);
+    return;
+  }
+  if(!code)return;
+
+  if(!state||state!==sessionStorage.getItem('noir_state')){
+    alert('Échec de vérification de sécurité. Recommence la connexion.');
+    history.replaceState({},'',redirectUri);
+    return;
+  }
+
+  try{
+    const r=await fetch('https://accounts.spotify.com/api/token',{
+      method:'POST',
+      headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      body:new URLSearchParams({
+        client_id:clientId,
+        grant_type:'authorization_code',
+        code,
+        redirect_uri:redirectUri,
+        code_verifier:sessionStorage.getItem('noir_verifier')||''
+      })
+    });
+
+    const d=await r.json();
+    if(!r.ok)throw Error(d.error_description||'Connexion impossible');
+
+    token=d.access_token;
+    expires=Date.now()+d.expires_in*1000;
+    localStorage.setItem('noir_token',token);
+    localStorage.setItem('noir_expires',expires);
+    setStatus('CONNECTÉ');
+    history.replaceState({},'',redirectUri);
+    go('search');
+  }catch(e){
+    alert('Connexion impossible : '+e.message);
+  }
+}
+
+async function ensureToken(){
+  if(token&&Date.now()<expires-60000)return token;
+  throw Error('Ta session Spotify a expiré. Reconnecte ton compte dans Réglages.');
+}
+
+function esc(s=''){
+  return String(s).replace(/[&<>"']/g,c=>({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+
+function trackCard(t){
+  const img=t.album?.images?.slice(-1)[0]?.url||'';
+  const artists=(t.artists||[]).map(a=>a.name).join(', ');
+  const saved=favorites.some(f=>f.id===t.id);
+
+  return `<article class="track">
+    <img class="cover" src="${esc(img)}" alt="" onerror="this.style.visibility='hidden'">
+    <div class="trackinfo">
+      <strong>${esc(t.name)}</strong>
+      <small>${esc(artists)} · ${esc(t.album?.name||'')}</small>
+    </div>
+    <div class="trackactions">
+      <button class="round" aria-label="${saved?'Retirer des favoris':'Ajouter aux favoris'}" data-fav="${esc(t.id)}">${saved?'♥':'♡'}</button>
+      <button class="round play" aria-label="Lire dans le lecteur NØIR" data-play="${esc(t.id)}">▶</button>
+    </div>
+  </article>`;
+}
+
+function playTrack(id){
+  const t=(window.noirTracks||[]).find(t=>t.id===id)||favorites.find(t=>t.id===id);
+
+  if(!id){
+    alert('Impossible de trouver ce morceau.');
+    return;
+  }
+
+  $('#nowPlaying').textContent=t
+    ?'Lecture : '+t.name+' — '+(t.artists||[]).map(a=>a.name).join(', ')
+    :'Lecture Spotify';
+
+  $('#spotifyPlayer').src=
+    'https://open.spotify.com/embed/track/'+encodeURIComponent(id)+'?utm_source=generator&theme=0';
+
+  $('#playerPanel').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function bindCards(container){
+  container.querySelectorAll('[data-fav]').forEach(b=>b.addEventListener('click',()=>{
+    const id=b.dataset.fav;
+    const track=(window.noirTracks||[]).find(t=>t.id===id)||favorites.find(t=>t.id===id);
+
+    if(!track){
+      alert('Relance la recherche pour ajouter ce titre aux favoris.');
+      return;
+    }
+
+    const i=favorites.findIndex(f=>f.id===id);
+    if(i>=0)favorites.splice(i,1);
+    else favorites.unshift(track);
+
+    localStorage.setItem('noir_favorites',JSON.stringify(favorites));
+    $('#favCount').textContent=favorites.length+' titre'+(favorites.length>1?'s':'');
+    renderResults(window.noirTracks||[]);
+    renderFavorites();
+  }));
+
+  container.querySelectorAll('[data-play]').forEach(b=>{
+    b.addEventListener('click',()=>playTrack(b.dataset.play));
+  });
+}
+
+function renderResults(tracks){
+  window.noirTracks=tracks;
+  const el=$('#searchResults');
+
+  el.innerHTML=tracks.length
+    ?tracks.map(t=>trackCard(t)).join('')
+    :'<div class="empty">Aucun résultat. Essaie un autre titre.</div>';
+
+  bindCards(el);
+  $('#resultCount').textContent=tracks.length+' titre'+(tracks.length>1?'s':'');
+}
+
+function renderFavorites(){
+  const el=$('#libraryResults');
+
+  $('#libraryCount').textContent=favorites.length+' titre'+(favorites.length>1?'s':'');
+  $('#favCount').textContent=favorites.length+' titre'+(favorites.length>1?'s':'');
+
+  el.innerHTML=favorites.length
+    ?favorites.map(t=>trackCard(t)).join('')
+    :'<div class="empty">Tes favoris apparaîtront ici. Lance une recherche puis touche ♡.</div>';
+
+  bindCards(el);
+}
+
+async function search(q){
+  go('search');
+  if(!q.trim())return;
+
+  $('#searchResults').innerHTML='<div class="empty">Recherche en cours…</div>';
+
+  try{
+    await ensureToken();
+
+    const r=await fetch(
+      'https://api.spotify.com/v1/search?'+
+      new URLSearchParams({q,type:'track',limit:'8'}),
+      {headers:{Authorization:'Bearer '+token}}
+    );
+
+    const d=await r.json();
+    if(!r.ok)throw Error(d.error?.message||'Recherche impossible');
+
+    renderResults(d.tracks?.items||[]);
+  }catch(e){
+    $('#searchResults').innerHTML=
+      '<div class="empty">'+esc(e.message)+
+      '<br><br><button class="primary" id="relogin">Reconnecter Spotify</button></div>';
+
+    $('#relogin')?.addEventListener('click',login);
+  }
+}
+
+$('#searchForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  search($('#searchInput').value);
+});
+
+$('#saveConfig').addEventListener('click',()=>{
+  clientId=$('#clientId').value.trim();
+
+  if(!clientId){
+    alert('Entre ton Client ID.');
+    return;
+  }
+
+  localStorage.setItem('noir_client_id',clientId);
+  setStatus(token&&Date.now()<expires?'CONNECTÉ':'PRÊT');
+  alert('Client ID enregistré. Vérifie que le Redirect URI correspond exactement à celui du tableau de bord Spotify.');
+});
+
 $('#loginBtn').addEventListener('click',login);
+
 $('#favCount').textContent=favorites.length+' titre'+(favorites.length>1?'s':'');
-if(token&&Date.now()<expires)setStatus('CONNECTÉ');else setStatus('MODE DÉMO');
+
+if(token&&Date.now()<expires)setStatus('CONNECTÉ');
+else setStatus('MODE DÉMO');
+
 handleCallback();
 </script>
 </body>
